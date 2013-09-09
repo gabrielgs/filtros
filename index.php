@@ -16,11 +16,13 @@
 
 </head>
 <body>
+	<h4 id="title">slips 3</h4>
 	<table border="1px" id="contenido" class="table table-striped table-bordered table-hover table-condensed">
 		<?php echo $contenido; ?>
 	</table>
 
 	<form id="filtros" action="includes/exportar.php" method="POST">
+		<input type="hidden" id="enviarNombre" name="nombreReporte" value="">
 		<input id="enviarFiltro" type="hidden" name="dataSend" value="">
 		<input id="send" type="submit" value="Exportar"/>
 	</form>

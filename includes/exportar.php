@@ -5,6 +5,10 @@
 	$pass = "summax";
 	$db = "summit";
 
+	$nombre = $_POST['nombreReporte'];
+
+	$nombreVista = str_replace(" ", "", $nombre);
+
 	$mysqli = new mysqli($host, $user, $pass, $db);
 
 	$mysqli -> query("SET NAMES 'utf8'");
@@ -17,7 +21,7 @@
 
 	$longitud = count($filtros);
 
-	$sql = "SELECT * FROM filtros1
+	$sql = "SELECT * FROM $nombreVista
 			WHERE `".$filtros[0]->campo."` LIKE '%".$filtros[0]->condicion."%' ";
 
 	for ($i=1; $i < $longitud; $i++) { 
@@ -28,17 +32,17 @@
 	$query = $mysqli -> query($sql);
 
 
-	header("Cache-Control: no-stor,no-cache,must-revalidate");
-    header("Cache-Control: post-check=0,pre-check=0", false);
-    header("Cache-control: private");
-    header("Content-type: application/vnd.ms-excel; name='excel'");
-    header("Content-Disposition: attachment; filename=Reporte.xls");
-    header("Content-Transfer-Encoding: binary");
-    header("Pragma: no-cache");
-    header("Expires: 0");
+	// header("Cache-Control: no-stor,no-cache,must-revalidate");
+ //    header("Cache-Control: post-check=0,pre-check=0", false);
+ //    header("Cache-control: private");
+ //    header("Content-type: application/vnd.ms-excel; name='excel'");
+ //    header("Content-Disposition: attachment; filename=Reporte.xls");
+ //    header("Content-Transfer-Encoding: binary");
+ //    header("Pragma: no-cache");
+ //    header("Expires: 0");
 	
 	$tabla = "
-			<h3>Reporte filtros1</h3>
+			<h3>$nombre</h3>
 			<table border='1px'> 
 				<thead>";
 

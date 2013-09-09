@@ -4,13 +4,17 @@
 	$pass = "summax";
 	$db = "summit";
 
+	$nombre = $_POST['nombre'];
+
+	$nombreVista = str_replace(" ", "", $nombre);
+
 	$contenido = '';
 
 	$mysqli = new mysqli($host, $user, $pass, $db);
 
 	$mysqli -> query("SET NAMES 'utf8'");
 
-	$sql = "SELECT * FROM filtros1";
+	$sql = "SELECT * FROM slips3";
 
 	$query = $mysqli -> query($sql);
 

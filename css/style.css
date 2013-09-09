@@ -1,3 +1,7 @@
-/*#contenido{
-	border: 2px solid blue;
-}*/
+.input-daterange .input-small{
+	margin-bottom: 0;
+}
+
+.rango{
+	display: inline-block;
+}

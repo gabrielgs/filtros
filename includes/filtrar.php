@@ -4,6 +4,10 @@
 	$pass = "summax";
 	$db = "summit";
 
+	$nombre = $_POST['nombreReporte'];
+
+	$nombreVista = str_replace(" ", "", $nombre);
+
 	$mysqli = new mysqli($host, $user, $pass, $db);
 
 	$mysqli -> query("SET NAMES 'utf8'");
@@ -16,7 +20,7 @@
 
 	$longitud = count($filtros);
 
-	$sql = "SELECT * FROM filtros1
+	$sql = "SELECT * FROM $nombreVista
 			WHERE `".$filtros[0]->campo."` LIKE '%".$filtros[0]->condicion."%' ";
 
 	for ($i=1; $i < $longitud; $i++) { 
