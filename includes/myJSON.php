@@ -1,5 +1,5 @@
 <?php  
-	$myJSON = '[{"campo":"plantilla", "condicion":"asadasd"}, {"campo":"plantilla", "condicion":"asadasd"}, {"campo":"referencia", "condicion":"GMX-WER"}]';
+	/*$myJSON = '[{"campo":"plantilla", "condicion":"asadasd"}, {"campo":"plantilla", "condicion":"asadasd"}, {"campo":"referencia", "condicion":"GMX-WER"}]';
 
 	$filtros = json_decode($myJSON);
 
@@ -19,6 +19,12 @@
 		echo $lon;
 		echo $key->campo.' ';
 		echo $key->condicion.'<br>';
-	}
+	}*/
+
+	$fecha = "10-02-2013";
+	list($d, $m, $y) = explode("-", $fecha);
+
+	$fecha2 = $y."-".$m."-".$d;
+	echo $fecha2;
 
 ?>

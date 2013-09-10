@@ -9,9 +9,9 @@ $(function(){
 			numeros = cadena.split("-");
 
 			// separamos los numeros en dia, mes, año
-			dia = numeros[2];
+			dia = numeros[0];
 			mes = (numeros[1]-1);
-			ano = numeros[0];
+			ano = numeros[2];
 
 			// Generamos una nueva fecha
 			fecha = new Date(ano, mes, dia);
@@ -60,7 +60,7 @@ $(function(){
 			valorColumnaSig = $columnaSiguiente.children('td:eq('+$posicionPadre+')').text();
 			existElem = $(this).siblings('.rango').length;
 
-		// debugger;
+		
 
 		/*Si la función isFecha() nos devuelve verdadero, es decir, si es una fecha*/
 		if( isFecha(valorColumnaSig) ){
@@ -68,7 +68,7 @@ $(function(){
 			// Haremos que el input sobre el cual se escribe se convierta en un datepicker
 			// lo que hara que aparezca un calendario.
 			$(this).datepicker({
-				format: "yyyy-mm-dd",
+				format: "dd-mm-yyyy",
 				language: "es",
 				autoclose: true,
 			});
@@ -94,13 +94,13 @@ $(function(){
 		$($padre).append(html);
 
 		$('.input-daterange').datepicker({
-			format: "yyyy-mm-dd",
+			format: "dd-mm-yyyy",
 			language: "es",
 			autoclose: true,
 		});
 
 		$(this).remove();
-		// debugger;
+		
 		$('.input-daterange').css('width', '250');
 		$('.input-daterange .add-on').css('margin', '0');
     });
@@ -108,7 +108,7 @@ $(function(){
 
     $('tr:eq(1) td').on('mouseover', '.input-daterange', function(){
 		var $padre = $(this).parent();
-			// debugger;
+			
 			existElem = $(this).siblings('.normal').length;
 
 		if(!existElem){
@@ -120,31 +120,20 @@ $(function(){
 
     /* Para rangos de fecha*/
     $('tr:eq(1) td').on('change', '#end', function(){
-    	debugger;
+
 		var $fecha1 = $(this).siblings('.start').val();
 			$fecha2 = $(this).val();
 			$condicion = $fecha1+" - "+$fecha2;
-			// variable que contiene el tr padre del input sobre el cual escribimos
-			$columna = $(this).closest('tr');
+			
 			$padre = $(this).closest('td');
 			$posicionPadre = $('td').index($padre);
 			$campo = $('th').eq($posicionPadre).text();
-			// La columna que esta debajo del elemento 
-			$columnaSiguiente = $columna.siblings('tr:eq(0)');
-			// El texto que tiene la columna que nos servira para comprobar si es una fecha.
-			valorColumnaSig = $columnaSiguiente.children('td:eq('+$posicionPadre+')').text();
+			
 			$nombreReporte = $('#title').text();
-			tipoDato = '';
+			tipoDato = 'fecha';
 			bandera = false;
 			contador = 0;
 
-		if( isFecha(valorColumnaSig) ){
-			tipoDato = 'fecha';
-		}else if( isNumeric(valorColumnaSig) ){
-			tipoDato = 'numero';
-		}else{
-			tipoDato = 'texto';
-		}
 
 
 		var myFiltro = new filtro($campo, $condicion, tipoDato);
@@ -162,6 +151,7 @@ $(function(){
 
 		if (bandera === true) {
 			filtroArr[contador].condicion = $condicion;
+			filtroArr[contador].tipo = tipoDato ;
 		}else{
 			filtroArr.push(myFiltro);
 		}
@@ -169,18 +159,91 @@ $(function(){
 		var filtroJSON = JSON.stringify(filtroArr);
 		$('#enviarFiltro').val(filtroJSON);
 		$('#enviarNombre').val($nombreReporte);
+
+		$.ajax({
+			cache:false,
+			type:"POST",
+			dataType: "json",
+			url: "includes/filtrar.php",
+			data: {dataSend:filtroJSON, nombreReporte:$nombreReporte},
+			success: function(response){
+				$('#contenido tbody tr:eq(0)').siblings().remove();
+				$(response).appendTo('#contenido tbody');
+
+			}
+		});
+    });
+
+    /* Para rangos de fecha*/
+    $('tr:eq(1) td').on('change', '.start', function(){
+		debugger;
+		var $fecha1 = $(this).val();
+			$fecha2 = $(this).siblings('#end').val();
+
+			$condicion = $fecha1+" - "+$fecha2;
+			
+			$padre = $(this).closest('td');
+			$posicionPadre = $('td').index($padre);
+			$campo = $('th').eq($posicionPadre).text();
+			
+			$nombreReporte = $('#title').text();
+			tipoDato = 'fecha';
+			bandera = false;
+			contador = 0;
+
+
+
+		var myFiltro = new filtro($campo, $condicion, tipoDato);
+
+		if (filtroArr.length > 0) {
+			for(var i in filtroArr){
+				if(filtroArr[i].campo === $campo){
+					bandera = true;
+					if(bandera === true){
+						contador = i;
+					}
+				}
+			}
+		}
+
+		if (bandera === true) {
+			filtroArr[contador].condicion = $condicion;
+			filtroArr[contador].tipo = tipoDato ;
+		}else{
+			filtroArr.push(myFiltro);
+		}
+
+		var filtroJSON = JSON.stringify(filtroArr);
+		$('#enviarFiltro').val(filtroJSON);
+		$('#enviarNombre').val($nombreReporte);
+
+		if ( $fecha2 !== '' ) {
+
+			$.ajax({
+				cache:false,
+				type:"POST",
+				dataType: "json",
+				url: "includes/filtrar.php",
+				data: {dataSend:filtroJSON, nombreReporte:$nombreReporte},
+				success: function(response){
+					$('#contenido tbody tr:eq(0)').siblings().remove();
+					$(response).appendTo('#contenido tbody');
+
+				}
+			});
+		}
     });
 
     $('tr:eq(1) td').on('click', '.normal', function(){
 		var html = '<input class="filtro" type="text" id="fecha">';
-			// debugger;
+			
 			$padre = $(this).parent();
 
 		$(this).siblings('.input-daterange').css('display', 'none');
 		$(this).siblings('#fecha').css('display', 'block');
 
 		$('#fecha').datepicker({
-			format: "yyyy-mm-dd",
+			format: "dd-mm-yyyy",
 			language: "es",
 			autoclose: true,
 		});
@@ -197,7 +260,7 @@ $(function(){
 
 
 	$('.filtro').on('change', function(){
-	
+		debugger;
 		var $condicion = $(this).val();
 			// variable que contiene el tr padre del input sobre el cual escribimos
 			$columna = $(this).closest('tr');
@@ -213,8 +276,7 @@ $(function(){
 			bandera = false;
 			contador = 0;
 
-		// debugger;
-		if( isFecha(valorColumnaSig) ){
+		if (isFecha(valorColumnaSig)) {
 			tipoDato = 'fecha';
 		}else if( isNumeric(valorColumnaSig) ){
 			tipoDato = 'numero';
@@ -222,6 +284,7 @@ $(function(){
 			tipoDato = 'texto';
 		}
 
+		
 		var myFiltro = new filtro($campo, $condicion, tipoDato);
 
 		if (filtroArr.length > 0) {
@@ -236,7 +299,9 @@ $(function(){
 		}
 
 		if (bandera === true) {
+			filtroArr[contador].condicion = "";
 			filtroArr[contador].condicion = $condicion;
+			filtroArr[contador].tipo = tipoDato;
 		}else{
 			filtroArr.push(myFiltro);
 		}
@@ -259,39 +324,4 @@ $(function(){
 		});
 	});
 
-	$('#boton').on('click', function(){
-
-		$.ajax({
-			cache:false,
-			type:"POST",
-			dataType:"json",
-			url:"includes/exportar.php",
-			data:{campo:$seleccion, valor:$filtro},
-			success: function(response){
-				alert(response);
-			}
-		});
-	});
-
-	/*$('#send').on('click', function(e){
-		e.preventDefault();
-
-		debugger;
-		var filtroJSON = JSON.stringify(filtroArr);
-
-		console.log(filtroJSON);
-
-		$('#filtros').submit();
-
-		$.ajax({
-			cache:false,
-			type:"POST",
-			dataType: "json",
-			url: "includes/exportar.php",
-			data:{dataSend:filtroJSON},
-			success:function(response){
-				alert('exitooooo');
-			}
-		});
-	});*/
 });

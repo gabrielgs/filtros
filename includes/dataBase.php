@@ -1,4 +1,21 @@
-<?php  
+<?php
+	function isFecha($campo){
+		list($y, $m, $d) = explode("-", $campo);
+
+		if (is_numeric($d) && is_numeric($m) && is_numeric($y)) {
+			$date = checkdate($m, $d, $y);
+
+			if ($date == true) {
+				$fecha = $d.'-'.$m.'-'.$y;
+				return $fecha;
+			}else{
+				return $campo;
+			}
+		}else{
+			return $campo;
+		}
+	}
+
 	$host= "localhost";
 	$user = "summax";
 	$pass = "summax";
@@ -47,7 +64,7 @@
 		$count = count($listado);
 
 		for ($i=0; $i < $count; $i++) { 
-			$contenido .= "<td>".$listado[$i]."</td>";
+			$contenido .= "<td>".isFecha($listado[$i])."</td>";
 		}
 
 		$contenido .= "</tr>";
